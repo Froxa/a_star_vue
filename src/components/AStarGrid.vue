@@ -5,35 +5,36 @@
 <script>
   export default {
     props: {
-      width: Number,
-      height: Number,
-      squareWidth: Number
+      cols: Number,
+      rows: Number,
+      squareSize: Number
     },
     
     computed: {
       cWidth() {
-        return 1 + this.width * this.squareWidth
+        return 1 + this.cols * this.squareSize
       },
       cHeight() {
-        return 1 + this.height * this.squareWidth
+        return 1 + this.rows * this.squareSize
       }
     },
     
     data() {
-      let filled = []
-      for (let x = 0; x < this.width; x++){
-        filled[x] = []
-        for (let y = 0; y < this.height; y++){
-          filled[x][y] = 0
-        }
-      }
-      
       return {
-        filled
+        filled: []
       }
     },
     
     methods: {
+      reset() {
+        this.filled = []
+        for (let x = 0; x < this.cols; x++) {
+          this.filled[x] = []
+          for (let y = 0; y < this.rows; y++) {
+            this.filled[x][y] = 0
+          }
+        }
+      },
       drawGrid() {
         const ctx = this.$el.getContext("2d")
         ctx.strokeStyle = 'lightgrey'
@@ -41,34 +42,33 @@
         console.log("Refreshing")
         
         // vertical
-        for (let x = 0.5; x < this.cWidth; x += this.squareWidth) {
+        for (let x = 0.5; x < this.cWidth; x += this.squareSize) {
           ctx.moveTo(x, 0)
           ctx.lineTo(x, this.cHeight)
         }
         
         // horizontal
-        for (let y = 0.5; y < this.cHeight; y += this.squareWidth) {
+        for (let y = 0.5; y < this.cHeight; y += this.squareSize) {
           ctx.moveTo(0, y)
           ctx.lineTo(this.cWidth, y)
         }
         
         ctx.stroke()
-      }
-      ,
+      },
       cursorPositionInGrid(canvas, event) {
         const rect = canvas.getBoundingClientRect()
         const x = event.clientX - rect.left - 20 //padding
         const y = event.clientY - rect.top - 20 //padding
         return {
-          x: Math.floor(x / this.squareWidth),
-          y: Math.floor(y / this.squareWidth)
+          x: Math.floor(x / this.squareSize),
+          y: Math.floor(y / this.squareSize)
         }
       },
       squareClicked(canvas, event) {
         const {x, y} = this.cursorPositionInGrid(canvas, event)
         
         // out of bounds?
-        if (x < 0 || x >= this.width || y < 0 || y >= this.height) {
+        if (x < 0 || x >= this.cols || y < 0 || y >= this.rows) {
           return
         }
         
@@ -88,7 +88,7 @@
       },
       paintSquare(x, y, color) {
         const ctx = this.$el.getContext("2d")
-        const sw = this.squareWidth
+        const sw = this.squareSize
         
         ctx.fillStyle = color
         ctx.fillRect(x * sw, y * sw, sw, sw)
@@ -96,16 +96,26 @@
     },
     
     mounted() {
+      this.reset()
       this.drawGrid()
       
       const canvas = this.$el
       canvas.addEventListener("mousedown", (e) => this.squareClicked(canvas, e))
-    }
-    ,
+    },
     
     updated() {
-      // reacts to size change from App.vue
+      // data changes
       this.drawGrid()
+    },
+    
+    // react to size change
+    watch: {
+      rows: function () {
+        this.reset()
+      },
+      cols: function () {
+        this.reset()
+      },
     }
   }
 </script>
