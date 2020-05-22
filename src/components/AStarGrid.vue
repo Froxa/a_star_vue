@@ -1,5 +1,5 @@
 <template>
-  <canvas class="gridCanvas" :width="cWidth" :height="cHeight"></canvas>
+  <canvas id="gridCanvas" :width="cWidth" :height="cHeight"></canvas>
 </template>
 
 <script>
@@ -121,7 +121,7 @@
 </script>
 
 <style scoped>
-  .gridCanvas {
+  #gridCanvas {
     position: relative !important;
     border: lightgrey 1px solid;
     border-radius: 5px;
