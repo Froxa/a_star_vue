@@ -14,9 +14,13 @@
         <label for="size">Square Size:</label>
         <input v-model="size" id="size" type="number">
       </div>
+      <div class="form-group">
+        <button class="btn-green" @click="start">START</button>
+        <button class="btn-red" @click="reset">RESET</button>
+      </div>
     </div>
     <div>
-      <AStarGrid :squareSize=parseInt(size) :rows=parseInt(rows) :cols=parseInt(cols)></AStarGrid>
+      <AStarGrid ref="grid" :squareSize=parseInt(size) :rows=parseInt(rows) :cols=parseInt(cols)></AStarGrid>
     </div>
   </div>
 </template>
@@ -34,6 +38,14 @@
         rows: 10,
         cols: 10,
         size: 50
+      }
+    },
+    methods: {
+      start() {
+        this.$refs.grid.aStar()
+      },
+      reset() {
+        this.$refs.grid.reset()
       }
     }
   }
@@ -66,11 +78,29 @@
   
   .form-group label {
     margin-right: 10px;
-    padding: 5px 0px;
+    padding: 5px 0;
   }
   
   .form-group input {
     margin-left: 10px;
     padding: 5px 10px;
+  }
+  
+  .form-group button {
+    margin-top: 10px;
+    width: 49%;
+    padding: 10px;
+  }
+  
+  .btn-green{
+    background-color: yellowgreen;
+    border: 0;
+    border-radius: 5px;
+  }
+  
+  .btn-red{
+    background-color: red;
+    border: 0;
+    border-radius: 5px;
   }
 </style>
